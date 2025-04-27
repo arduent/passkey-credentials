@@ -110,15 +110,6 @@ switch ($page)
         case 'pk-reg':
                 $x=file_get_contents('pk-reg.html');
 
-                $message = base64_encode(random_bytes(64));
-                $key = bin2hex(random_bytes(32));
-
-                $_SESSION['message'] = $message;
-                $_SESSION['key'] = $key;
-
-                $x=str_replace('<!--message-->','"'.$message.'"',$x);
-                $x=str_replace('<!--key-->','"'.$key.'"',$x);
-
                 $csrf = '<meta name="csrf-token" content="'.$_SESSION['csrf_token'].'">';
                 $s=explode('<!--SPLIT-->',$x);
                 $layout = str_replace('</head>',$csrf."\n".array_shift($s)."\n".'</head>',$layout);
