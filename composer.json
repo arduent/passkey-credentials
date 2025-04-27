@@ -1,0 +1,10 @@
+{
+    "require": {
+        "web-auth/webauthn-lib": "^5.2",
+        "robthree/twofactorauth": "^3.0",
+        "endroid/qr-code": "^6.0",
+        "web-token/jwt-library": "^4.0",
+        "nyholm/psr7": "^1.8",
+        "nyholm/psr7-server": "^1.1"
+    }
+}

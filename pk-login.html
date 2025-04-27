@@ -1,0 +1,82 @@
+<script>
+
+function decodeBase64UrlToUint8(input) {
+  let b64 = input
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+  const pad = b64.length % 4;
+  if (pad) {
+    b64 += '='.repeat(4 - pad);
+  }
+  const bin = atob(b64);
+  return Uint8Array.from(bin, c => c.charCodeAt(0));
+}
+
+async function login() {
+  const token = document.querySelector('meta[name="csrf-token"]').content;
+  const resp = await fetch('/login-op', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','HTTP_X_CSRF_TOKEN':token},
+    body: JSON.stringify({
+      username: document.getElementById('loginUser').value
+    })
+  });
+
+  let data;
+  try {
+    data = await resp.json();
+  } catch (e) {
+    return alert('Unexpected server response');
+  }
+
+  if (!resp.ok) {
+    return alert(data.error || data.message || 'Registration failed');
+  }
+
+  const options = data;
+
+  // Replace both lines with calls to the helper:
+  options.challenge = decodeBase64UrlToUint8(options.challenge);
+  options.allowCredentials = options.allowCredentials.map(c => ({
+    ...c,
+    id: decodeBase64UrlToUint8(c.id)
+  }));
+
+  // Now call the WebAuthn API:
+  const assertion = await navigator.credentials.get({ publicKey: options });
+
+  const authData = {
+    id: assertion.id,
+    rawId: btoa(String.fromCharCode(...new Uint8Array(assertion.rawId))),
+    type: assertion.type,
+    response: {
+      clientDataJSON:   btoa(String.fromCharCode(...new Uint8Array(assertion.response.clientDataJSON))),
+      authenticatorData:btoa(String.fromCharCode(...new Uint8Array(assertion.response.authenticatorData))),
+      signature:        btoa(String.fromCharCode(...new Uint8Array(assertion.response.signature))),
+      userHandle:       assertion.response.userHandle
+        ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.userHandle)))
+        : null
+    }
+  };
+
+  const verifyResp = await fetch('/login', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(authData)
+  });
+  const result = await verifyResp.json();
+  alert(result.success ? 'Logged in!' : 'Failed: '+result.error);
+  if (result.success)
+  {
+    window.location.href="/account";
+  }
+}
+</script>
+
+<!--SPLIT-->
+
+<form onsubmit="event.preventDefault(); login();">
+  <input id="loginUser" placeholder="Email Address" required>
+  <button type="submit">Login with Passkey</button>
+</form>
+
