@@ -34,17 +34,17 @@ The registration-op.php script generates a random challenge and sends to the cli
 ## Project Structure
 
 ```
-composer.json          ← composer refs
-composer.lock          ← composer bits
-index.php              ← example home controller
-layout.html            ← basic layout HTML
-login-op.php           ← emits JSON/HTML for Passkey login
-login.php              ← validates assertion for login
-pk-login.html          ← HTML + JS for Passkey login
-pk-reg.html            ← HTML + JS for Passkey registration
-register.php           ← validates attestation and stores
-registration-op.php    ← emits WebAuthn creation options (JSON)
-schema.sql             ← example SQL schema
+composer.json          . composer refs
+composer.lock          . composer bits
+index.php              . example home controller
+layout.html            . basic layout HTML
+login-op.php           . emits JSON/HTML for Passkey login
+login.php              . validates assertion for login
+pk-login.html          . HTML + JS for Passkey login
+pk-reg.html            . HTML + JS for Passkey registration
+register.php           . validates attestation and stores
+registration-op.php    . emits WebAuthn creation options (JSON)
+schema.sql             . example SQL schema
 ```
 
 ---
@@ -114,5 +114,4 @@ $conn=mysqli_connect('127.0.0.1','user','pass','database') or die('no connecto')
 ## License
 
 This example code is released under the **MIT License**. Feel free to adapt it for your own projects!
-```
 
