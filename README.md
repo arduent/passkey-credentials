@@ -113,5 +113,8 @@ $conn=mysqli_connect('127.0.0.1','user','pass','database') or die('no connecto')
 
 ## License
 
-This example code is released under the **MIT License**. Feel free to adapt it for your own projects!
+This example code is released under the **MIT License**. 
+
+Contact Waitman Gobble <waitman@quantificant.com> if you need help.
+
 
