@@ -1,8 +1,8 @@
-```markdown
 # Passkey-Based Authentication Example
 
 This is a minimal PHP example showing how to add **Passkey** (FIDO2/WebAuthn) registration and login flows to your app using the [web-auth/webauthn-framework](https://github.com/web-auth/webauthn-framework) library.
 
+The registration-op.php script generates a random challenge and sends to the client. The client signs the challenge and sends back the signed data and key id to the server. The server stores the key id and public key. When the user logs in, the server sends a list of keys for that user account (the user can register as many as they wish). The documentation for webauthn-framework recommends sending random data mixed with keys to prevent key enumeration. When the user wants to login, they enter their email address (anonymous setup is also possible), and the server sends the list of public keys and a random challenge. The user decideds which public key they have / want to use and signs the challenge, and sends the signature and public key back to the server. The client also keeps track of how many times the key was used to authenticate, as well as any other changes the user may make to their public key info, so it's a good idea to store the updated public key data in the credentials database. (you may wish to use an immutable database and/or record changes)
 ---
 
 ## Features
@@ -25,67 +25,6 @@ This is a minimal PHP example showing how to add **Passkey** (FIDO2/WebAuthn) re
 - optional - A PDO-enabled database (MySQL, MariaDB, SQLite, etc.)
 
 ---
-
-## Installation
-
-1. **Clone this repo**  
-   ```bash
-   git clone https://github.com/your-org/webauthn-example.git
-   cd webauthn-example
-   ```
-
-2. **Install dependencies**  
-   ```bash
-   composer install
-   ```
-
-3. **Configure your web server**  
-   - Point your DocumentRoot at the `public/` folder.  
-   - Enable HTTPS with a valid certificate.  
-   - Ensure PHP sessions & JSON requests work correctly.
-
-4. **Set up the database**  
-   - Create your `users` and `credentials` tables as shown below.  
-   - Update your DSN / DB credentials in `config.php`.
-
-   ```sql
-   CREATE TABLE users (
-     id            INT AUTO_INCREMENT PRIMARY KEY,
-     email         VARCHAR(255)    UNIQUE NOT NULL,
-     display_name  VARCHAR(255)    NOT NULL,
-     password_hash VARCHAR(255)    NULL,
-     totp_secret   VARCHAR(64)     NULL,
-     totp_enabled  TINYINT(1)      NOT NULL DEFAULT 0,
-     created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
-   );
-
-   CREATE TABLE credentials (
-     id            BINARY(36)      PRIMARY KEY,
-     user_id       INT             NOT NULL
-       REFERENCES users(id) ON DELETE CASCADE,
-     public_key    BLOB            NOT NULL,
-     sign_count    BIGINT          NOT NULL,
-     transports    VARCHAR(255)    DEFAULT NULL,
-     nickname      VARCHAR(100)    DEFAULT NULL,
-     created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
-   );
-   ```
-
----
-
-
-composer.json          ← composer refs
-composer.lock          ← composer bits
-index.php              ← example home controller
-layout.html            ← basic layout HTML
-login-op.php           ← emits JSON/HTML for Passkey login
-login.php              ← validates assertion for login
-pk-login.html          ← HTML + JS for Passkey login
-pk-reg.html            ← HTML + JS for Passkey registration
-register.php           ← validates attestation and stores
-registration-op.php    ← emits WebAuthn creation options (JSON)
-schema.sql             ← example SQL schema
-
 
 ## Project Structure
 
