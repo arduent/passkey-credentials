@@ -13,11 +13,8 @@ The registration-op.php script generates a random challenge and sends to the cli
 ## Features
 
 - Passwordless “register” & “login” via passkeys (platform authenticators or security keys)  
-- Email-OTP fallback (no passwords stored)  
-- TOTP (“authenticator app”) optional  
 - CSRF protection  
-- Per-user management of multiple credentials  
-- Recovery codes & email reset flows  
+- Can add Per-user management of multiple credentials  
 
 ---
 
